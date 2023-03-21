@@ -1,0 +1,111 @@
+package jsp9_company2;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class Company2DAO {
+	Connection con;
+	PreparedStatement psmt;
+	ResultSet res;
+	String driver="oracle.jdbc.driver.OracleDriver";
+	String url="jdbc:oracle:thin:@localhost:1521:xe";
+	public void input(Company2DTO dto)
+	{
+		String name=dto.getName();
+		int su=dto.getSu();
+		int price=dto.getPrice();
+		int maechul=su*price;
+		try {
+			Class.forName(driver);
+			try {
+				con=DriverManager.getConnection(url,"ezen","ez311");
+				String sql="insert into company2 values(?,?,?,?)";
+				psmt=con.prepareStatement(sql);
+				psmt.setString(1, name);
+				psmt.setInt(2, su);
+				psmt.setInt(3, price);
+				psmt.setInt(4, maechul);
+				int k=psmt.executeUpdate();
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}///////
+	//////
+	public ResultSet out() throws ClassNotFoundException
+	{
+		Class.forName(driver);
+		try {
+			con=DriverManager.getConnection(url,"ezen","ez311");
+			String sql="select * from company2";
+			psmt=con.prepareStatement(sql);
+			res=psmt.executeQuery();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	//////////
+	public ResultSet sortout() throws ClassNotFoundException
+	{
+		Class.forName(driver);
+		try {
+			con=DriverManager.getConnection(url,"ezen","ez311");
+			String sql="select * from company2 order by name desc";
+			psmt=con.prepareStatement(sql);
+			res=psmt.executeQuery();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
+	}
+	//////////
+	public ResultSet namesortout() throws ClassNotFoundException
+	{
+		Class.forName(driver);
+		try {
+			con=DriverManager.getConnection(url,"ezen","ez311");
+			String sql="select name , sum(maechul) from company2 "+
+			"group by name ";
+			psmt=con.prepareStatement(sql);
+			res=psmt.executeQuery();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	
+	//////////
+	public ResultSet avgnamesortout() throws ClassNotFoundException
+	{
+		Class.forName(driver);
+		try {
+			con=DriverManager.getConnection(url,"ezen","ez311");
+			String sql="select name ,avg(su),avg(price), avg(maechul) from company2 "+
+			"group by name order by avg(maechul) desc";
+			psmt=con.prepareStatement(sql);
+			res=psmt.executeQuery();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
+	}
+	
+	//////////
+
+}
